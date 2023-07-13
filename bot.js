@@ -7,6 +7,14 @@ const fs = require("fs");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const filePath = "weeklyComps.json";
 
+bot.telegram.setMyCommands([
+  {
+    command: "comps",
+    description:
+      "Get a list of the weekly best team compositions and how to play with them",
+  },
+]);
+
 bot.command("comps", async (ctx) => {
   console.log(ctx.from);
   try {
