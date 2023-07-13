@@ -1,12 +1,13 @@
 require("dotenv/config");
-const rp = require("request-promise");
+
 const cheerio = require("cheerio");
 const fs = require("fs");
 
 const url = process.env.URL_NAME;
 
-rp(url)
-  .then(function (html) {
+axios.get(url)
+  .then(function (response) {
+    const html = response.data;
     const $ = cheerio.load(html);
 
     const titles = getCompTitles($);
