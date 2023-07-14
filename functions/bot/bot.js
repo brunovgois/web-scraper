@@ -5,6 +5,8 @@ const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+const messagesId = []
+
 bot.telegram.setMyCommands([
   {
     command: "comps",
@@ -22,6 +24,9 @@ bot.command("comps", async (ctx) => {
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
+
+    await ctx.telegram.sendMessage(ctx.chat.id, messagesId[0])
+
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
   }
@@ -36,7 +41,9 @@ async function sendMessageWithDelay(ctx, comp, delay) {
         {
           disable_notification: true,
         }
-      );
+      ).then((messageId) => {
+        messagesId.push(messageId)
+      });
       resolve();
     }, delay);
   });
