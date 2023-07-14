@@ -25,7 +25,6 @@ bot.command("comps", async (ctx) => {
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
-
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
   }
@@ -40,14 +39,17 @@ async function sendMessageWithDelay(ctx, comp, delay) {
       ${comp.title}\n\n<details><summary>${comp.text}</summary></details>\n\n${comp.img}
     `;
 
-      ctx.telegram.sendMessage(
-        ctx.chat.id,
-        collapsibleText,
-        {
-          parse_mode: 'HTML',
+      ctx.telegram
+        .sendMessage(ctx.chat.id, collapsibleText, {
+          parse_mode: "HTML",
           disable_notification: true,
-        }
-      );
+        })
+        .then(() => {
+          console.log("Message sent successfully");
+        })
+        .catch((error) => {
+          console.error("Error sending message:", error);
+        });
       resolve();
     }, delay);
   });
