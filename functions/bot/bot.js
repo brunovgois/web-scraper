@@ -5,9 +5,14 @@ const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const rootDir = process.env.LAMBDA_TASK_ROOT;
+/* const rootDir = process.env.LAMBDA_TASK_ROOT;
 
-const filePath = path.join(rootDir, "weeklyComps.json");
+const filePath = path.join(rootDir, "weeklyComps.json"); */
+
+const fileName = "weeklyComps.json";
+const resolved = process.env.LAMBDA_TASK_ROOT
+  ? path.resolve(process.env.LAMBDA_TASK_ROOT, fileName)
+  : path.resolve(__dirname, fileName);
 
 bot.telegram.setMyCommands([
   {
@@ -20,7 +25,7 @@ bot.telegram.setMyCommands([
 bot.command("comps", async (ctx) => {
   console.log(ctx.from);
   try {
-    const jsonString = await fs.promises.readFile(filePath, "utf8");
+    const jsonString = await fs.promises.readFile(resolved, "utf8");
     const objects = JSON.parse(jsonString);
 
     for (const comp of objects) {
