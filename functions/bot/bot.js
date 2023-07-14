@@ -36,12 +36,12 @@ async function sendMessageWithDelay(ctx, comp, delay) {
       const collapsibleText = `
       [\\+] Click to expand
 
-      *${comp.title}*\n\n<details><summary>${comp.text}</summary></details>\n\n${comp.img}
+      ${comp.title}\n\n<details><summary>${comp.text}</summary></details>\n\n${comp.img}
     `;
 
       ctx.telegram
         .sendMessage(ctx.chat.id, collapsibleText, {
-          parse_mode: "MarkdownV2",
+          parse_mode: "html",
           disable_notification: true,
         })
         .then(() => {
