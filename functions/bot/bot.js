@@ -1,11 +1,11 @@
 require("dotenv/config");
-
+const path = require("path");
+const rootDir = path.resolve(__dirname, "../../");
 const { Telegraf } = require("telegraf");
-
 const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const filePath = "../../weeklyComps.json";
+const filePath = path.join(rootDir, "weeklyComps.json");
 
 bot.telegram.setMyCommands([
   {
@@ -24,7 +24,6 @@ bot.command("comps", async (ctx) => {
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
-
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
   }
@@ -51,12 +50,15 @@ process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
  */
 
-exports.handler = async event => {
+exports.handler = async (event) => {
   try {
-    await bot.handleUpdate(JSON.parse(event.body))
-    return { statusCode: 200, body: "" }
+    await bot.handleUpdate(JSON.parse(event.body));
+    return { statusCode: 200, body: "" };
   } catch (e) {
-    console.error("error in handler:", e)
-    return { statusCode: 400, body: "This endpoint is meant for bot and telegram communication" }
+    console.error("error in handler:", e);
+    return {
+      statusCode: 400,
+      body: "This endpoint is meant for bot and telegram communication",
+    };
   }
-}
+};
