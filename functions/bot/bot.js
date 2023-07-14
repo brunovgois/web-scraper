@@ -5,15 +5,6 @@ const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-/* const rootDir = process.env.LAMBDA_TASK_ROOT;
-
-const filePath = path.join(rootDir, "weeklyComps.json"); */
-
-const fileName = "weeklyComps.json";
-const resolved = process.env.LAMBDA_TASK_ROOT
-  ? path.resolve(process.env.LAMBDA_TASK_ROOT, fileName)
-  : path.resolve(__dirname, fileName);
-
 bot.telegram.setMyCommands([
   {
     command: "comps",
@@ -25,7 +16,7 @@ bot.telegram.setMyCommands([
 bot.command("comps", async (ctx) => {
   console.log(ctx.from);
   try {
-    const jsonString = await fs.promises.readFile(resolved, "utf8");
+    const jsonString = await fs.promises.readFile(require.resolve("./weeklyComps"), "utf8");
     const objects = JSON.parse(jsonString);
 
     for (const comp of objects) {
@@ -60,7 +51,7 @@ process.once("SIGTERM", () => bot.stop("SIGTERM"));
 exports.handler = async (event) => {
   try {
     await bot.handleUpdate(JSON.parse(event.body));
-    return { statusCode: 200, body: "" };
+    return { statusCode: 200, body: ""};
   } catch (e) {
     console.error("error in handler:", e);
     return {
