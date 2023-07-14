@@ -1,10 +1,12 @@
 require("dotenv/config");
 const path = require("path");
-const rootDir = path.resolve(__dirname, "../../");
 const { Telegraf } = require("telegraf");
 const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+const rootDir = process.env.LAMBDA_TASK_ROOT;
+
 const filePath = path.join(rootDir, "weeklyComps.json");
 
 bot.telegram.setMyCommands([
