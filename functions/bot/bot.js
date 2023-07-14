@@ -41,7 +41,8 @@ async function sendMessageWithDelay(ctx, comp, delay) {
             disable_notification: true,
           }
         )
-        .then(() => {
+        .then((m) => {
+          console.log("Message ID:", m.message_id)
           console.log("Message sent successfully");
         })
         .catch((error) => {
@@ -51,12 +52,6 @@ async function sendMessageWithDelay(ctx, comp, delay) {
     }, delay);
   });
 }
-
-/* bot.launch();
-
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
- */
 
 exports.handler = async (event) => {
   try {
