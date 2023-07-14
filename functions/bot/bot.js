@@ -41,8 +41,8 @@ async function sendMessageWithDelay(ctx, comp, delay) {
         {
           disable_notification: true,
         }
-      ).then((messageId) => {
-        messagesId.push(messageId)
+      ).then((message) => {
+        messagesId.push(message.message_id)
       });
       resolve();
     }, delay);
