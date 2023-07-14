@@ -33,17 +33,14 @@ bot.command("comps", async (ctx) => {
 async function sendMessageWithDelay(ctx, comp, delay) {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const collapsibleText = `
-      [\\+] Click to expand
-
-      ${comp.title}\n\n<details><summary>${comp.text}</summary></details>\n\n${comp.img}
-    `;
-
       ctx.telegram
-        .sendMessage(ctx.chat.id, collapsibleText, {
-          parse_mode: "html",
-          disable_notification: true,
-        })
+        .sendMessage(
+          ctx.chat.id,
+          `${comp.title}\n\n${comp.text}\n\n${comp.img}`,
+          {
+            disable_notification: true,
+          }
+        )
         .then(() => {
           console.log("Message sent successfully");
         })
