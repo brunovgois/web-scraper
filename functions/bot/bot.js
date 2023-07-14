@@ -5,8 +5,6 @@ const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-const messagesId = []
-
 bot.telegram.setMyCommands([
   {
     command: "comps",
@@ -18,14 +16,15 @@ bot.telegram.setMyCommands([
 bot.command("comps", async (ctx) => {
   console.log(ctx.from);
   try {
-    const jsonString = await fs.promises.readFile(require.resolve("./weeklyComps"), "utf8");
+    const jsonString = await fs.promises.readFile(
+      require.resolve("./weeklyComps"),
+      "utf8"
+    );
     const objects = JSON.parse(jsonString);
 
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
-
-    await ctx.telegram.sendMessage(ctx.chat.id, messagesId[0])
 
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
@@ -41,9 +40,7 @@ async function sendMessageWithDelay(ctx, comp, delay) {
         {
           disable_notification: true,
         }
-      ).then((message) => {
-        messagesId.push(message.message_id)
-      });
+      );
       resolve();
     }, delay);
   });
@@ -58,7 +55,7 @@ process.once("SIGTERM", () => bot.stop("SIGTERM"));
 exports.handler = async (event) => {
   try {
     await bot.handleUpdate(JSON.parse(event.body));
-    return { statusCode: 200, body: ""};
+    return { statusCode: 200, body: "" };
   } catch (e) {
     console.error("error in handler:", e);
     return {
