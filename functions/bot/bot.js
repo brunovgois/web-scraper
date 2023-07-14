@@ -5,7 +5,7 @@ const { Telegraf } = require("telegraf");
 const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const filePath = "weeklyComps.json";
+const filePath = "../../weeklyComps.json";
 
 bot.telegram.setMyCommands([
   {
