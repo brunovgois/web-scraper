@@ -34,7 +34,7 @@ async function sendMessageWithDelay(ctx, comp, delay) {
   return new Promise((resolve) => {
     setTimeout(() => {
       const collapsibleText = `
-      [+] Click to expand
+      [\\+] Click to expand
 
       *${comp.title}*\n\n<details><summary>${comp.text}</summary></details>\n\n${comp.img}
     `;
