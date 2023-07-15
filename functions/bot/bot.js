@@ -5,11 +5,17 @@ const fs = require("fs");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+const messagesIdLog = [];
+
 bot.telegram.setMyCommands([
   {
     command: "comps",
     description:
       "Get a list of the weekly best team compositions and how to play with them",
+  },
+  {
+    command: "test",
+    description: "testing",
   },
 ]);
 
@@ -30,6 +36,13 @@ bot.command("comps", async (ctx) => {
   }
 });
 
+bot.command("test", (ctx) => {
+  //testing
+  ctx.reply(messagesIdLog.toString(), {
+    reply_to_message_id: messagesIdLog[2],
+  });
+});
+
 async function sendMessageWithDelay(ctx, comp, delay) {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -42,8 +55,7 @@ async function sendMessageWithDelay(ctx, comp, delay) {
           }
         )
         .then((m) => {
-          console.log("Message ID:", m.message_id)
-          console.log("Message sent successfully");
+          messagesIdLog.push(m.message_id);
         })
         .catch((error) => {
           console.error("Error sending message:", error);
