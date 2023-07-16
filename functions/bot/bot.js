@@ -6,7 +6,6 @@ const fs = require("fs");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const messagesIdLog = [];
-let preparedReply = 'Here are links to the first 5 messages:';
 
 bot.telegram.setMyCommands([
   {
@@ -14,10 +13,10 @@ bot.telegram.setMyCommands([
     description:
       "Get a list of the weekly best team compositions and how to play with them",
   },
-  {
+  /*   {
     command: "test",
     description: "testing",
-  },
+  }, */
 ]);
 
 bot.command("comps", async (ctx) => {
@@ -32,25 +31,17 @@ bot.command("comps", async (ctx) => {
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
-
-    for (let i = 0; i < 5; i++) {
-      preparedReply += '\n' + '<a href="' + messagesIdLog[i] + '">Message ' + i + '</a>';
-    }
-    ctx.preparedReply = preparedReply;
-
-    ctx.reply = messagesIdLog[0];
-
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
   }
 });
 
-bot.command("test", (ctx) => {
+/* bot.command("test", (ctx) => {
   //testing
   ctx.reply(messagesIdLog.toString(), {
     reply_to_message_id: messagesIdLog[2],
   });
-});
+}); */
 
 async function sendMessageWithDelay(ctx, comp, delay) {
   return new Promise((resolve) => {
