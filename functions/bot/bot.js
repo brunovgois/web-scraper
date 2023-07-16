@@ -6,6 +6,7 @@ const fs = require("fs");
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const messagesIdLog = [];
+let preparedReply = 'Here are links to the first 5 messages:';
 
 bot.telegram.setMyCommands([
   {
@@ -31,6 +32,14 @@ bot.command("comps", async (ctx) => {
     for (const comp of objects) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
+
+    for (let i = 0; i < 5; i++) {
+      preparedReply += '\n' + '<a href="' + messagesIdLog[i] + '">Message ' + i + '</a>';
+    }
+    ctx.preparedReply = preparedReply;
+
+    ctx.reply = messagesIdLog[0];
+
   } catch (e) {
     console.error("Error reading or parsing JSON file:", e);
   }
