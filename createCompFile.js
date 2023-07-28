@@ -1,11 +1,12 @@
 require("dotenv/config");
-const axios = require('axios');
+const axios = require("axios");
 const cheerio = require("cheerio");
 const fs = require("fs");
 
 const url = process.env.URL_NAME;
 
-axios.get(url)
+axios
+  .get(url)
   .then(function (response) {
     const html = response.data;
     const $ = cheerio.load(html);
@@ -41,15 +42,13 @@ axios.get(url)
 
 function getImages($) {
   const images = $(".wp-block-image.size-large");
-/* bug  removing png */
-  const imageUrls = images 
+  const imageUrls = images
     .map(function () {
       if ($(this).children().prop("name") === "img") {
-        return $(this).children("img").attr("src").slice(0, -5);
+        return $(this).children("img").attr("src");
       } else {
-        return $(this).children("a").children("img").attr("src").slice(0, -5);
+        return $(this).children("a").children("img").attr("src");
       }
-      
     })
     .get();
   return imageUrls;
