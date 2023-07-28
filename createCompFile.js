@@ -41,8 +41,8 @@ axios.get(url)
 
 function getImages($) {
   const images = $(".wp-block-image.size-large");
-
-  const imageUrls = images
+/* bug  removing png */
+  const imageUrls = images 
     .map(function () {
       if ($(this).children().prop("name") === "img") {
         return $(this).children("img").attr("src").slice(0, -5);
