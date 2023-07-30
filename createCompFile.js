@@ -75,9 +75,15 @@ function getHowToPlay($) {
   pTags.each(function (index, element) {
     var $element = $(element);
 
+    const previousSibling = $element.prev();
+    const isPreviousSiblingFigure = previousSibling.is("figure");
+
+    if(isPreviousSiblingFigure) {
+      currentText = $element.text() + "\n"
+    }
+
     if ($element.text().includes("How to Play")) {
       shouldExtract = true;
-      currentText = "";
     }
 
     if (shouldExtract) {
