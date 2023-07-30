@@ -45,9 +45,9 @@ function getImages($) {
   const imageUrls = images
     .map(function () {
       if ($(this).children().prop("name") === "img") {
-        return $(this).children("img").attr("src");
+        return $(this).children("img").attr("src").replace(".webp", "");
       } else {
-        return $(this).children("a").children("img").attr("src");
+        return $(this).children("a").children("img").attr("src").replace(".webp", "");
       }
     })
     .get();
