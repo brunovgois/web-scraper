@@ -4,23 +4,25 @@ const cheerio = require("cheerio");
 
 const url = process.env.URL_NAME;
 
-axios
-  .get(url)
-  .then(function (response) {
-    const html = response.data;
-    const compositions = createJSONFromHTML(html);
+const createComp = async () => {
+  try{
+    const response = await axios.get(url);
 
-    //TODO: replace JSON text for supabase
-    //get to see if entries match
-    //post new entry if dont
+  const html = response.data;
+  const compositions = createJSONFromHTML(html);
 
-    const jsonString = JSON.stringify(compositions, null, 2);
-    console.log(jsonString)
-    
-  })
-  .catch(function (err) {
-    console.error(err);
-  });
+  //TODO: replace JSON text for supabase
+  //get to see if entries match
+  //post new entry if dont
+
+  const jsonString = JSON.stringify(compositions, null, 2);
+  console.log(jsonString);
+  } catch(e){
+    console.error(err)
+  }
+};
+
+createComp()
 
 function createJSONFromHTML(html) {
   const $ = cheerio.load(html);
