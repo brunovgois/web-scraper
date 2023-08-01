@@ -1,7 +1,6 @@
 require("dotenv/config");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const fs = require("fs");
 
 const url = process.env.URL_NAME;
 
@@ -9,45 +8,53 @@ axios
   .get(url)
   .then(function (response) {
     const html = response.data;
-    const $ = cheerio.load(html);
+    const compositions = createJSONFromHTML(html);
 
-    const titles = getCompTitles($);
-    const images = getImages($);
-    const texts = getHowToPlay($);
-
-    const compositions = [];
-
-    for (let i = 0; i < titles.length; i++) {
-      const obj = {
-        title: titles[i],
-        img: images[i].slice(2),
-        text: texts[i],
-      };
-      compositions.push(obj);
-    }
+    //TODO: replace JSON text for supabase
+    //get to see if entries match
+    //post new entry if dont
 
     const jsonString = JSON.stringify(compositions, null, 2);
-
-    fs.writeFile("./weeklyComps.json", jsonString, (err) => {
-      if (err) {
-        console.log("Error writing file", err);
-      } else {
-        console.log("Successfully wrote file");
-      }
-    });
+    console.log(jsonString)
+    
   })
   .catch(function (err) {
     console.error(err);
   });
+
+function createJSONFromHTML(html) {
+  const $ = cheerio.load(html);
+
+  const titles = getCompTitles($);
+  const images = getImages($);
+  const texts = getHowToPlay($);
+
+  const compositions = [];
+
+  for (let i = 0; i < titles.length; i++) {
+    const obj = {
+      title: titles[i],
+      img: images[i].slice(2),
+      text: texts[i],
+    };
+    compositions.push(obj);
+  }
+
+  return compositions;
+}
 
 function getImages($) {
   const images = $(".wp-block-image.size-large");
   const imageUrls = images
     .map(function () {
       if ($(this).children().prop("name") === "img") {
-        return $(this).children("img").attr("src").replace(".webp", "");
+        return $(this).children("img").attr("src").replace(".webp ", "");
       } else {
-        return $(this).children("a").children("img").attr("src").replace(".webp", "");
+        return $(this)
+          .children("a")
+          .children("img")
+          .attr("src")
+          .replace(".webp", "");
       }
     })
     .get();
@@ -78,8 +85,8 @@ function getHowToPlay($) {
     const previousSibling = $element.prev();
     const isPreviousSiblingFigure = previousSibling.is("figure");
 
-    if(isPreviousSiblingFigure) {
-      currentText = $element.text() + "\n"
+    if (isPreviousSiblingFigure) {
+      currentText = $element.text() + "\n";
     }
 
     if ($element.text().includes("How to Play")) {
