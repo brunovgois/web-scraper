@@ -12,29 +12,22 @@ const createComp = async () => {
     const html = response.data;
     const compositions = createJSONFromHTML(html);
 
-    //TODO: replace JSON text for supabase
-    //get to see if entries match
-    //post new entry if dont
-
-    const jsonString = JSON.stringify(compositions, null, 2);
-
     const getCompFromDatabase = await axios.get(databaseURL, {
       headers: {
         apiKey: process.env.API_KEY_DATABASE,
       },
     });
 
-    console.log();
-
-    console.log();
-
-    const bool = areJSONCompsEqual(
-      jsonString,
+    const thisWeekEqualPastWeek = areJSONCompsEqual(
+      compositions,
       getCompFromDatabase.data[0].comps
     ); //change 2 parameter
 
-    console.log(bool);
-
+    if (thisWeekEqualPastWeek) {
+      return;
+    } else {
+      //TODO post new comp to supabase
+    }
   } catch (e) {
     console.error(e);
   }
@@ -42,9 +35,8 @@ const createComp = async () => {
 
 createComp();
 
-// Function to recursively sort properties within an object
 function sortObject(obj) {
-  if (typeof obj !== 'object' || obj === null) {
+  if (typeof obj !== "object" || obj === null) {
     return obj;
   }
 
@@ -53,23 +45,33 @@ function sortObject(obj) {
   }
 
   const sortedObj = {};
-  Object.keys(obj).sort().forEach(key => {
-    sortedObj[key] = sortObject(obj[key]);
-  });
-
+  Object.keys(obj)
+    .sort()
+    .forEach((key) => {
+      sortedObj[key] = sortObject(obj[key]);
+    });
 
   return sortedObj;
 }
 
-// Function to compare two JSON objects
 function areObjectsEqual(obj1, obj2) {
+  if (
+    typeof obj1 !== "object" ||
+    typeof obj2 !== "object" ||
+    obj1 === null ||
+    obj2 === null
+  ) {
+    return obj1 === obj2;
+  }
+
   const sortedObj1 = sortObject(obj1);
   const sortedObj2 = sortObject(obj2);
   return JSON.stringify(sortedObj1) === JSON.stringify(sortedObj2);
 }
 
-// Function to compare the responses
 function areJSONCompsEqual(response1, response2) {
+  /*   console.log(response1, response2); */
+
   if (response1.length !== response2.length) {
     console.log("The JSON responses are not equal.");
     return false;
@@ -81,39 +83,9 @@ function areJSONCompsEqual(response1, response2) {
       return false;
     }
   }
+  console.log("The JSON responses are equal.");
   return true;
 }
-
-/* // Function to sort properties within an object
-function sortObject(obj) {
-  const sortedObj = {};
-  Object.keys(obj)
-    .sort()
-    .forEach((key) => {
-      sortedObj[key] = obj[key];
-    });
-  return sortedObj;
-}
-
-// Function to compare two JSON objects
-function areObjectsEqual(obj1, obj2) {
-  const sortedObj1 = sortObject(obj1);
-  const sortedObj2 = sortObject(obj2);
-  return JSON.stringify(sortedObj1) === JSON.stringify(sortedObj2);
-}
-
-function areJSONCompsEqual(response1, response2) {
-  if (response1.length !== response2.length) {
-    return false;
-  }
-
-  for (let i = 0; i < response1.length; i++) {
-    if (!areObjectsEqual(response1[i], response2[i])) {
-      return false;
-    }
-  }
-  return true;
-} */
 
 function createJSONFromHTML(html) {
   const $ = cheerio.load(html);
