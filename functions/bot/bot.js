@@ -13,10 +13,6 @@ bot.telegram.setMyCommands([
     description:
       "Get a list of the weekly best team compositions and how to play with them",
   },
-  /*   {
-    command: "test",
-    description: "testing",
-  }, */
 ]);
 
 bot.command("comps", async (ctx) => {
@@ -35,13 +31,6 @@ bot.command("comps", async (ctx) => {
     console.error("Error reading or parsing JSON file:", e);
   }
 });
-
-/* bot.command("test", (ctx) => {
-  //testing
-  ctx.reply(messagesIdLog.toString(), {
-    reply_to_message_id: messagesIdLog[2],
-  });
-}); */
 
 async function sendMessageWithDelay(ctx, comp, delay) {
   return new Promise((resolve) => {
