@@ -17,8 +17,12 @@ bot.telegram.setMyCommands([
   {
     command: "comps",
     description:
-      "Get a list of the weekly best team compositions and how to play with them",
+      "Get a list of the best team compositions and how to play with them",
   },
+  {
+    command: "top 5",
+    description: "Get the top 5 team compositions",
+  }
 ]);
 
 bot.command("comps", async (ctx) => {
@@ -30,13 +34,28 @@ bot.command("comps", async (ctx) => {
       return;
     }
 
-    console.log("temp debug - supabase data", data)
-
     for (const comp of data[0].comps) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
   } catch (e) {
-    console.error("Error reading or parsing JSON file:", e);
+    console.error("Error reading or parsing JSON:", e);
+  }
+});
+
+bot.command("top 5", async (ctx) => {
+  try {
+    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+
+    if (error) {
+      console.error("Error fetching data from Supabase:", error);
+      return;
+    }
+
+    for (const comp of data[0].comps.slice(0, 5)) {
+      await sendMessageWithDelay(ctx, comp, 300);
+    }
+  } catch (e) {
+    console.error("Error reading or parsing JSON:", e);
   }
 });
 
