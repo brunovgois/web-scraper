@@ -1,6 +1,11 @@
 require("dotenv/config");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { createClient } = require("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const URL = process.env.URL_NAME;
 const databaseURL = process.env.URL_DATABASE;
@@ -12,21 +17,29 @@ const createComp = async () => {
     const html = response.data;
     const compositions = createJSONFromHTML(html);
 
-    const getCompFromDatabase = await axios.get(databaseURL, {
-      headers: {
-        apiKey: process.env.API_KEY_DATABASE,
-      },
-    });
+    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+
 
     const thisWeekEqualPastWeek = areJSONCompsEqual(
       compositions,
-      getCompFromDatabase.data[0].comps
-    ); //change 2 parameter
+      data[0].comps
+    );
 
     if (thisWeekEqualPastWeek) {
+
       return;
     } else {
-      //TODO post new comp to supabase
+      const { data: newData, error: insertError } = await supabase
+        .from("TeamComps")
+        .insert([{ comps: compositions }]);
+
+      if (insertError) {
+        console.error("Error inserting new data to Supabase:", insertError);
+        return;
+      }
+
+      console.log("New entry added to Supabase:", newData);
+
     }
   } catch (e) {
     console.error(e);
@@ -70,7 +83,6 @@ function areObjectsEqual(obj1, obj2) {
 }
 
 function areJSONCompsEqual(response1, response2) {
-  /*   console.log(response1, response2); */
 
   if (response1.length !== response2.length) {
     console.log("The JSON responses are not equal.");
@@ -92,6 +104,7 @@ function createJSONFromHTML(html) {
 
   const titles = getCompTitles($);
   const images = getImages($);
+
   const texts = getHowToPlay($);
 
   const compositions = [];
@@ -99,7 +112,7 @@ function createJSONFromHTML(html) {
   for (let i = 0; i < titles.length; i++) {
     const obj = {
       title: titles[i],
-      img: images[i].slice(2),
+      img: images[i],
       text: texts[i],
     };
     compositions.push(obj);
@@ -110,19 +123,18 @@ function createJSONFromHTML(html) {
 
 function getImages($) {
   const images = $(".wp-block-image.size-large");
+
   const imageUrls = images
     .map(function () {
       if ($(this).children().prop("name") === "img") {
-        return $(this).children("img").attr("src").replace(".webp ", "");
+        return $(this).children("img").attr("data-origin-src")
       } else {
-        return $(this)
-          .children("a")
-          .children("img")
-          .attr("src")
-          .replace(".webp", "");
+        return $(this).children("a").children("img").attr("data-origin-src")
       }
     })
     .get();
+
+
   return imageUrls;
 }
 function getCompTitles($) {
