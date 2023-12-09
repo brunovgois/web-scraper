@@ -1,9 +1,15 @@
 require("dotenv/config");
 const path = require("path");
 const { Telegraf } = require("telegraf");
-const fs = require("fs");
+
+const { createClient } = require("@supabase/supabase-js");
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const messagesIdLog = [];
 
@@ -16,15 +22,17 @@ bot.telegram.setMyCommands([
 ]);
 
 bot.command("comps", async (ctx) => {
-  console.log(ctx.from);
   try {
-    const jsonString = await fs.promises.readFile(
-      require.resolve("./weeklyComps"),
-      "utf8"
-    );
-    const objects = JSON.parse(jsonString);
+    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
 
-    for (const comp of objects) {
+    if (error) {
+      console.error("Error fetching data from Supabase:", error);
+      return;
+    }
+
+    console.log("temp debug - supabase data", data)
+
+    for (const comp of data[0].comps) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
   } catch (e) {
