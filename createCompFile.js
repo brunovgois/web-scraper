@@ -8,7 +8,6 @@ const supabase = createClient(
 );
 
 const URL = process.env.URL_NAME;
-const databaseURL = process.env.URL_DATABASE;
 
 const createComp = async () => {
   try {
@@ -180,6 +179,10 @@ function getHowToPlay($) {
         );
       }
     }
+  });
+
+  extractedTexts.forEach((text, index) => {
+    extractedTexts[index] = text.replace("Augments:", "");
   });
 
   return extractedTexts;
