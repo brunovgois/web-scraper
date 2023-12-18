@@ -34,6 +34,8 @@ bot.command("comps", async (ctx) => {
       return;
     }
 
+    console.log(data)
+
     for (const comp of data[0].comps) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
