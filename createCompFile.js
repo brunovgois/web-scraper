@@ -19,6 +19,8 @@ const createComp = async () => {
     const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
 
 
+   /*     console.log("compositions", compositions)
+     */ 
     const thisWeekEqualPastWeek = areJSONCompsEqual(
       compositions,
       data[0].comps
@@ -120,22 +122,48 @@ function createJSONFromHTML(html) {
   return compositions;
 }
 
+function extractLargestSrcSet(imageUrls) {
+  const largestURLs = [];
+
+  imageUrls.forEach((imageUrlSet) => {
+    const urls = imageUrlSet.split(', ');
+
+    let maxResolution = 0;
+    let largestURL = '';
+
+    urls.forEach((url) => {
+      const [imageUrl, resolution] = url.split(' ');
+
+      const value = parseInt(resolution, 10);
+
+      if (!isNaN(value) && value > maxResolution) {
+        maxResolution = value;
+        largestURL = imageUrl;
+      }
+    });
+
+    largestURLs.push(largestURL);
+  });
+
+  return largestURLs;
+}
+
+
 function getImages($) {
-  const images = $(".wp-block-image.size-large");
+  const images = $(".gb-block-image");
 
   const imageUrls = images
     .map(function () {
-      if ($(this).children().prop("name") === "img") {
-        return $(this).children("img").attr("data-origin-src")
-      } else {
-        return $(this).children("a").children("img").attr("data-origin-src")
-      }
+      return $(this).children("a").children("img").attr("srcset")
     })
     .get();
 
+  const updatedImageUrls = extractLargestSrcSet(imageUrls)
 
-  return imageUrls;
+
+  return updatedImageUrls;
 }
+
 function getCompTitles($) {
   const compTitles = $("h3");
   const titles = [];
@@ -161,7 +189,7 @@ function getHowToPlay($) {
     const previousSibling = $element.prev();
     const isPreviousSiblingFigure = previousSibling.is("figure");
 
-    if (isPreviousSiblingFigure) {
+    if (isPreviousSiblingFigure) { //Leveling pattern
       currentText = $element.text() + "\n";
     }
 
