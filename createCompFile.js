@@ -16,21 +16,18 @@ const createComp = async () => {
     const html = response.data;
     const compositions = createJSONFromHTML(html);
 
-    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+    const { data } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
 
-
-   /*     console.log("compositions", compositions)
-     */ 
     const thisWeekEqualPastWeek = areJSONCompsEqual(
       compositions,
       data[0].comps
     );
 
     if (thisWeekEqualPastWeek) {
-
+      console.log("The JSON responses are equal. Nothing added to database");
       return;
     } else {
-      const { data: newData, error: insertError } = await supabase
+      const { error: insertError } = await supabase
         .from("TeamComps")
         .insert([{ comps: compositions }]);
 
@@ -38,8 +35,7 @@ const createComp = async () => {
         console.error("Error inserting new data to Supabase:", insertError);
         return;
       }
-
-      console.log("New entry added to Supabase:", newData);
+      console.log("New entry added to database");
 
     }
   } catch (e) {
@@ -86,17 +82,14 @@ function areObjectsEqual(obj1, obj2) {
 function areJSONCompsEqual(response1, response2) {
 
   if (response1.length !== response2.length) {
-    console.log("The JSON responses are not equal.");
     return false;
   }
 
   for (let i = 0; i < response1.length; i++) {
     if (!areObjectsEqual(response1[i], response2[i])) {
-      console.log("The JSON responses are not equal.");
       return false;
     }
   }
-  console.log("The JSON responses are equal.");
   return true;
 }
 
@@ -180,7 +173,6 @@ function getHowToPlay($) {
   const pTags = $("p");
 
   const extractedTexts = [];
-  var shouldExtract = false;
   var currentText = "";
 
   pTags.each(function (index, element) {
@@ -193,19 +185,20 @@ function getHowToPlay($) {
       currentText = $element.text() + "\n";
     }
 
-    if ($element.text().includes("How to Play")) {
-      shouldExtract = true;
-    }
 
-    if (shouldExtract) {
+    if ($element.text().includes("Best Emblem/Spatula Holder")) {
       currentText += $element.text().trim() + " ";
 
-      if ($element.text().includes("Counters")) {
-        shouldExtract = false;
-        extractedTexts.push(
-          currentText.replace("Items: Core: ", "").slice(0, -9).trim()
-        );
-      }
+      const indexOfSubstrToRemove = currentText.indexOf("Item Holder");
+      const updatedText = currentText.substring(0, indexOfSubstrToRemove);
+
+      extractedTexts.push(updatedText);
+    }
+    if ($element.text().includes("How to Play")) {
+      currentText += $element.text().trim() + " ";
+      extractedTexts.push(
+        currentText + "\n"
+      );
     }
   });
 
