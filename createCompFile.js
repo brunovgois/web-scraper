@@ -103,6 +103,10 @@ function createJSONFromHTML(html) {
 
   const compositions = [];
 
+/*   console.log("images size", images.length);
+  console.log("titles size", titles.length);
+  console.log("texts size", texts.length); */
+
   for (let i = 0; i < titles.length; i++) {
     const obj = {
       title: titles[i],
@@ -171,39 +175,30 @@ function getCompTitles($) {
 
 function getHowToPlay($) {
   const pTags = $("p");
-
   const extractedTexts = [];
+  var shouldExtract = false;
   var currentText = "";
-
-  pTags.each(function (index, element) {
+  pTags.each(function (_, element) {
     var $element = $(element);
-
     const previousSibling = $element.prev();
     const isPreviousSiblingFigure = previousSibling.is("figure");
 
-    if (isPreviousSiblingFigure) { //Leveling pattern
+    if (isPreviousSiblingFigure) {
       currentText = $element.text() + "\n";
     }
 
-
-    if ($element.text().includes("Best Emblem/Spatula Holder")) {
-      currentText += $element.text().trim() + " ";
-
-      const indexOfSubstrToRemove = currentText.indexOf("Item Holder");
-      const updatedText = currentText.substring(0, indexOfSubstrToRemove);
-
-      extractedTexts.push(updatedText);
-    }
     if ($element.text().includes("How to Play")) {
-      currentText += $element.text().trim() + " ";
-      extractedTexts.push(
-        currentText + "\n"
-      );
+      shouldExtract = true;
     }
-  });
-
-  extractedTexts.forEach((text, index) => {
-    extractedTexts[index] = text.replace("Augments:", "");
+    if (shouldExtract) {
+      currentText += $element.text()/* .trim()  */+ " ";
+      if ($element.text().includes("Items")) {
+        shouldExtract = false;
+        extractedTexts.push(
+          currentText.trim()
+        );
+      }
+    }
   });
 
   return extractedTexts;
