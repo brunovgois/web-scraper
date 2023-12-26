@@ -8,6 +8,7 @@ const supabase = createClient(
 );
 
 const URL = process.env.URL_NAME;
+const categories = { S: [], A: [], B: [] };
 
 const createComp = async () => {
   try {
@@ -29,7 +30,7 @@ const createComp = async () => {
     } else {
       const { error: insertError } = await supabase
         .from("TeamComps")
-        .insert([{ comps: compositions }]);
+        .insert([{ comps: compositions, comp_names: categories }]);
 
       if (insertError) {
         console.error("Error inserting new data to Supabase:", insertError);
@@ -103,9 +104,9 @@ function createJSONFromHTML(html) {
 
   const compositions = [];
 
-/*   console.log("images size", images.length);
-  console.log("titles size", titles.length);
-  console.log("texts size", texts.length); */
+  /*   console.log("images size", images.length);
+    console.log("titles size", titles.length);
+    console.log("texts size", texts.length); */
 
   for (let i = 0; i < titles.length; i++) {
     const obj = {
@@ -181,8 +182,25 @@ function getHowToPlay($) {
   pTags.each(function (_, element) {
     var $element = $(element);
     const previousSibling = $element.prev();
-    const isPreviousSiblingFigure = previousSibling.is("figure");
+    const parent = $element.parent();
 
+    const isPreviousSiblingFigure = previousSibling.is("figure");
+    const isParentPreviousSiblingH2 = parent.prev().is("h2");
+
+    if (isParentPreviousSiblingH2) {
+      const parts = $element.text().split(/([SAB]:)\s*/).filter(part => part.trim().length > 0);
+      let currentCategory = '';
+
+      parts.forEach(part => {
+        if (part.endsWith(':')) {
+          currentCategory = part.slice(0, 1);
+        } else {
+          const strings = part.split(',').map(s => s.trim()).filter(Boolean);
+          categories[currentCategory] = categories[currentCategory].concat(strings);
+        }
+      });
+
+    }
     if (isPreviousSiblingFigure) {
       currentText = $element.text() + "\n";
     }
@@ -191,7 +209,7 @@ function getHowToPlay($) {
       shouldExtract = true;
     }
     if (shouldExtract) {
-      currentText += $element.text()/* .trim()  */+ " ";
+      currentText += $element.text() + " ";
       if ($element.text().includes("Items")) {
         shouldExtract = false;
         extractedTexts.push(
