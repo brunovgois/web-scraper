@@ -20,7 +20,7 @@ bot.telegram.setMyCommands([
       "Get a list of the best team compositions and how to play with them",
   },
   {
-    command: "S_tier",
+    command: "s_tier",
     description: "Get the S tier team compositions",
   }
 ]);
@@ -42,7 +42,7 @@ bot.command("comps", async (ctx) => {
   }
 });
 
-bot.command("S_tier", async (ctx) => {
+bot.command("s_tier", async (ctx) => {
   try {
     const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
 
