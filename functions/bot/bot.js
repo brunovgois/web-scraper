@@ -66,12 +66,14 @@ bot.command("comps", async (ctx) => {
 
 bot.command("s_tier", async (ctx) => {
   try {
-    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+    if (!cachedData) {
+      cachedData = await fetchTeamComps();
+    }
 
-    const filteredCompositions = data[0].comps.filter(composition => {
-      data[0].comp_names.S.includes(composition.title)
+    const filteredCompositions = cachedData.comps.filter(composition => {
+      cachedData.comp_names.S.includes(composition.title)
 
-      const normalizedTitle = data[0].comp_names.S.map(title => title.toLowerCase().trim());
+      const normalizedTitle = cachedData.comp_names.S.map(title => title.toLowerCase().trim());
       const normalizedCompositionTitle = composition.title.toLowerCase().trim();
 
       return normalizedTitle.includes(normalizedCompositionTitle);
@@ -92,12 +94,14 @@ bot.command("s_tier", async (ctx) => {
 
 bot.command("a_tier", async (ctx) => {
   try {
-    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+    if (!cachedData) {
+      cachedData = await fetchTeamComps();
+    }
 
-    const filteredCompositions = data[0].comps.filter(composition => {
-      data[0].comp_names.A.includes(composition.title)
+    const filteredCompositions = cachedData.comps.filter(composition => {
+      cachedData.comp_names.A.includes(composition.title)
 
-      const normalizedTitle = data[0].comp_names.A.map(title => title.toLowerCase().trim());
+      const normalizedTitle = cachedData.comp_names.A.map(title => title.toLowerCase().trim());
       const normalizedCompositionTitle = composition.title.toLowerCase().trim();
 
       return normalizedTitle.includes(normalizedCompositionTitle);
@@ -118,12 +122,14 @@ bot.command("a_tier", async (ctx) => {
 
 bot.command("b_tier", async (ctx) => {
   try {
-    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+    if (!cachedData) {
+      cachedData = await fetchTeamComps();
+    }
 
-    const filteredCompositions = data[0].comps.filter(composition => {
-      data[0].comp_names.B.includes(composition.title)
+    const filteredCompositions = cachedData.comps.filter(composition => {
+      cachedData.comp_names.B.includes(composition.title)
 
-      const normalizedTitle = data[0].comp_names.B.map(title => title.toLowerCase().trim());
+      const normalizedTitle = cachedData.comp_names.B.map(title => title.toLowerCase().trim());
       const normalizedCompositionTitle = composition.title.toLowerCase().trim();
 
       return normalizedTitle.includes(normalizedCompositionTitle);
