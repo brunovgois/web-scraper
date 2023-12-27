@@ -20,8 +20,8 @@ bot.telegram.setMyCommands([
       "Get a list of the best team compositions and how to play with them",
   },
   {
-    command: "top_5",
-    description: "Get the top 5 team compositions",
+    command: "S_tier",
+    description: "Get the S tier team compositions",
   }
 ]);
 
@@ -42,16 +42,25 @@ bot.command("comps", async (ctx) => {
   }
 });
 
-bot.command("top_5", async (ctx) => {
+bot.command("S_tier", async (ctx) => {
   try {
     const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+
+    const filteredCompositions = data[0].comps.filter(composition => {
+      data[0].comp_names.S.includes(composition.title)
+
+      const normalizedTitle = data[0].comp_names.S.map(title => title.toLowerCase().trim());
+      const normalizedCompositionTitle = composition.title.toLowerCase().trim();
+
+      return normalizedTitle.includes(normalizedCompositionTitle);
+    });
 
     if (error) {
       console.error("Error fetching data from Supabase:", error);
       return;
     }
 
-    for (const comp of data[0].comps.slice(0, 5)) {
+    for (const comp of filteredCompositions) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
   } catch (e) {
