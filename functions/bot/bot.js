@@ -1,5 +1,4 @@
 require("dotenv/config");
-const path = require("path");
 const { Telegraf } = require("telegraf");
 
 const { createClient } = require("@supabase/supabase-js");
@@ -12,6 +11,23 @@ const supabase = createClient(
 );
 
 const messagesIdLog = [];
+
+let cachedData = undefined;
+
+async function fetchTeamComps() {
+  const { data, error } = await supabase
+    .from("TeamComps")
+    .select("*")
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error) {
+    console.error("Error fetching data from Supabase:", error);
+    return null;
+  }
+
+  return data[0];
+}
 
 bot.telegram.setMyCommands([
   {
@@ -35,14 +51,12 @@ bot.telegram.setMyCommands([
 
 bot.command("comps", async (ctx) => {
   try {
-    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
 
-    if (error) {
-      console.error("Error fetching data from Supabase:", error);
-      return;
+    if (!cachedData) {
+      cachedData = await fetchTeamComps();
     }
 
-    for (const comp of data[0].comps) {
+    for (const comp of cachedData.comps) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
   } catch (e) {
