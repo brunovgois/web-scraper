@@ -202,7 +202,7 @@ function getHowToPlay($) {
 
     }
     if (isPreviousSiblingFigure) {
-      currentText = $element.text() + "\n";
+      currentText = $element.text() + "\n\n";
     }
 
     if ($element.text().includes("How to Play")) {
@@ -213,7 +213,7 @@ function getHowToPlay($) {
       if ($element.text().includes("Items")) {
         shouldExtract = false;
         extractedTexts.push(
-          currentText.trim()
+          currentText.trim().replace("Items:", "")
         );
       }
     }
