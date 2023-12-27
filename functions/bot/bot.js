@@ -22,6 +22,14 @@ bot.telegram.setMyCommands([
   {
     command: "s_tier",
     description: "Get the S tier team compositions",
+  },
+  {
+    command: "a_tier",
+    description: "Get the A tier team compositions",
+  },
+  {
+    command: "b_tier",
+    description: "Get the b tier team compositions",
   }
 ]);
 
@@ -50,6 +58,58 @@ bot.command("s_tier", async (ctx) => {
       data[0].comp_names.S.includes(composition.title)
 
       const normalizedTitle = data[0].comp_names.S.map(title => title.toLowerCase().trim());
+      const normalizedCompositionTitle = composition.title.toLowerCase().trim();
+
+      return normalizedTitle.includes(normalizedCompositionTitle);
+    });
+
+    if (error) {
+      console.error("Error fetching data from Supabase:", error);
+      return;
+    }
+
+    for (const comp of filteredCompositions) {
+      await sendMessageWithDelay(ctx, comp, 300);
+    }
+  } catch (e) {
+    console.error("Error reading or parsing JSON:", e);
+  }
+});
+
+bot.command("a_tier", async (ctx) => {
+  try {
+    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+
+    const filteredCompositions = data[0].comps.filter(composition => {
+      data[0].comp_names.A.includes(composition.title)
+
+      const normalizedTitle = data[0].comp_names.A.map(title => title.toLowerCase().trim());
+      const normalizedCompositionTitle = composition.title.toLowerCase().trim();
+
+      return normalizedTitle.includes(normalizedCompositionTitle);
+    });
+
+    if (error) {
+      console.error("Error fetching data from Supabase:", error);
+      return;
+    }
+
+    for (const comp of filteredCompositions) {
+      await sendMessageWithDelay(ctx, comp, 300);
+    }
+  } catch (e) {
+    console.error("Error reading or parsing JSON:", e);
+  }
+});
+
+bot.command("b_tier", async (ctx) => {
+  try {
+    const { data, error } = await supabase.from("TeamComps").select("*").order('created_at', { ascending: false }).limit(1);
+
+    const filteredCompositions = data[0].comps.filter(composition => {
+      data[0].comp_names.B.includes(composition.title)
+
+      const normalizedTitle = data[0].comp_names.B.map(title => title.toLowerCase().trim());
       const normalizedCompositionTitle = composition.title.toLowerCase().trim();
 
       return normalizedTitle.includes(normalizedCompositionTitle);
