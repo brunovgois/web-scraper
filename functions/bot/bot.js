@@ -79,11 +79,6 @@ bot.command("s_tier", async (ctx) => {
       return normalizedTitle.includes(normalizedCompositionTitle);
     });
 
-    if (error) {
-      console.error("Error fetching data from Supabase:", error);
-      return;
-    }
-
     for (const comp of filteredCompositions) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
@@ -107,11 +102,6 @@ bot.command("a_tier", async (ctx) => {
       return normalizedTitle.includes(normalizedCompositionTitle);
     });
 
-    if (error) {
-      console.error("Error fetching data from Supabase:", error);
-      return;
-    }
-
     for (const comp of filteredCompositions) {
       await sendMessageWithDelay(ctx, comp, 300);
     }
@@ -134,11 +124,6 @@ bot.command("b_tier", async (ctx) => {
 
       return normalizedTitle.includes(normalizedCompositionTitle);
     });
-
-    if (error) {
-      console.error("Error fetching data from Supabase:", error);
-      return;
-    }
 
     for (const comp of filteredCompositions) {
       await sendMessageWithDelay(ctx, comp, 300);
