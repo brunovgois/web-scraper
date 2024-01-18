@@ -104,10 +104,6 @@ function createJSONFromHTML(html) {
 
   const compositions = [];
 
-  /*   console.log("images size", images.length);
-    console.log("titles size", titles.length);
-    console.log("texts size", texts.length); */
-
   for (let i = 0; i < titles.length; i++) {
     const obj = {
       title: titles[i],
