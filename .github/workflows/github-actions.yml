@@ -1,0 +1,8 @@
+
+name: Github Actions Demo
+on: [push]
+jobs: 
+  Create-New-Comp:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World - triggered by ${{ github.event_name }}"
