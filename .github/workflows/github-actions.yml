@@ -1,8 +1,24 @@
 
-name: Github Actions Demo
-on: [push]
+name: Run createCompFile.js every week to update team composition database
+on:
+  schedule:
+    - cron: "0 0 * * 0" # At midnight every Sunday
 jobs: 
-  Create-New-Comp:
+  update:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Hello World - triggered by ${{ github.event_name }}"
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Node 
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+    
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run script
+      run: node createCompFile.js
+
+
