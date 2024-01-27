@@ -175,6 +175,7 @@ function getHowToPlay($) {
   const extractedTexts = [];
   var shouldExtract = false;
   var currentText = "";
+
   pTags.each(function (_, element) {
     var $element = $(element);
     const previousSibling = $element.prev();
@@ -201,15 +202,20 @@ function getHowToPlay($) {
       currentText = $element.text() + "\n\n";
     }
 
-    if ($element.text().includes("How to Play")) {
+    if ($element.text().includes("Headliner")) {
       shouldExtract = true;
     }
+
     if (shouldExtract) {
       currentText += $element.text() + " ";
+
       if ($element.text().includes("Items")) {
         shouldExtract = false;
         extractedTexts.push(
-          currentText.trim().replace("Items:", "")
+          currentText.trim().replace("Items:", "").
+          replace(/\s*Item Holder:\s*/g, '\n\nItem Holder: ').
+          replace(/\s*Best Emblem\s*/g, '\n\nBest Emblem').
+          replace(/\s*How to Play\s*/g, '\n\nHow to Play')
         );
       }
     }
