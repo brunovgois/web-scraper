@@ -2,20 +2,19 @@
 name: Run createCompFile.js every week to update team composition database
 on:
   schedule:
-    - cron: "0 0 * * 0" # At midnight every Sunday
+    - cron: "0 19 * * 0" # At 19 pm every Sunday
 jobs: 
   update:
     runs-on: ubuntu-latest
-      
-    steps:
-     
 
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      env:
+    env:
         URL_NAME: ${{ secrets.URL_NAME }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_KEY: ${{ secrets.SUPABASE_URL }}
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Node 
       uses: actions/setup-node@v4
