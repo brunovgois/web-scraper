@@ -6,6 +6,12 @@ on:
 jobs: 
   update:
     runs-on: ubuntu-latest
+    
+    env:
+      URL_NAME: ${{ secrets.URL_NAME }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_URL }}
+      
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
