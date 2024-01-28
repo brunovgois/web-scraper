@@ -2,7 +2,7 @@
 name: Run createCompFile.js every week to update team composition database
 on:
   schedule:
-    - cron: "0 19 * * 0" # At 19 pm every Sunday
+    - cron: "0 23 * * 0" # At 23 pm every Sunday
 jobs: 
   update:
     runs-on: ubuntu-latest
